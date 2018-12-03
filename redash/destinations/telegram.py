@@ -29,6 +29,11 @@ class Telegram(BaseDestination):
                     "type": "string",
                     "title": "Allow query result download links in notifications?\nQuery result download is available in .csv, .xlsx, and .json files.\nOnly privileged logged-in users can download the files.\n(yes/no, case insensitive)",
                     "default": "no"
+                },
+                "short_mode": {
+                    "type": "string",
+                    "title": "Short, summarized notification messages (yes/no, case insensitive)",
+                    "default": "no"
                 }
             },
             "required": ["chat_id"]
@@ -44,18 +49,25 @@ class Telegram(BaseDestination):
         if not recipients:
             logging.warning("No chat ID given. Skipping send.")
 
+
         domain_name = host.split('.')[0].replace("https://","") 
 
-        essence = "*{alert_name}* @ {domain_name}  \n[Configure alert]({host}/alerts/{alert_id})\n\n*{state}* {date} (UTC+0 time)\n\nQuery link:  \n{host}/queries/{query_id}"
+        if str(options.get('short_mode')).lower() == "yes":
+          essence = "*{alert_name}* @ {domain_name} *{state}*\n[Configure]({host}/alerts/{alert_id}) | [Query]({host}/queries/{query_id})"
+        else:
+          essence = "*{alert_name}* @ {domain_name}  \n[Configure alert]({host}/alerts/{alert_id})\n\n*{state}* {date} (UTC+0 time)\n\nQuery link:  \n{host}/queries/{query_id}"
         
         if str(options.get('allow_download_links')).lower() == "yes":
           result_csv = "{host}/api/queries/{query_id}/results/{result_id}.csv".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
           result_xlsx = "{host}/api/queries/{query_id}/results/{result_id}.xlsx".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
           result_json = "{host}/api/queries/{query_id}/results/{result_id}.json".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
-   
-          essence += "  \nDownload query result in .csv:  \n[CSV download]({result_csv})".format(result_csv=result_csv)
-          essence += "  \nDownload query result in .xlsx:  \n[XLSX download]({result_xlsx})".format(result_xlsx=result_xlsx)
-          essence += "  \nDownload query result in .json:  \n[JSON download]({result_json})".format(result_json=result_json)
+
+          if str(options.get('short_mode')).lower() == "yes":
+            essence += " | [CSV]({result_csv}) | [XLSX]({result_xlsx}) | [JSON]({result_json})".format(result_csv=result_csv, result_xlsx=result_xlsx, result_json=result_json)
+          else:
+            essence += "  \nDownload query result in .csv:  \n[CSV download]({result_csv})".format(result_csv=result_csv)
+            essence += "  \nDownload query result in .xlsx:  \n[XLSX download]({result_xlsx})".format(result_xlsx=result_xlsx)
+            essence += "  \nDownload query result in .json:  \n[JSON download]({result_json})".format(result_json=result_json)
       
         send = True 
 
