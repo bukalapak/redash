@@ -42,9 +42,11 @@ RUN pip install --user pandas
 
 USER root
 
+ADD . /opt/redash
+
 #ADD ./node_modules      /opt/redash/node_modules
-ADD ./client            /opt/redash/client
-ADD ./tmp/exclude.tar.gz   /opt/redash/
+#ADD ./client            /opt/redash/client
+#ADD ./tmp/exclude.tar.gz   /opt/redash/
 
 #RUN tar -xzf /tmp/exclude* -C /opt/redash/ && rm /tmp/exclude*
 
