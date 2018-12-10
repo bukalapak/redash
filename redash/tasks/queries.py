@@ -488,7 +488,7 @@ class QueryExecutor(object):
             self.metadata['Queue'] = self.task.request.delivery_info['routing_key']
 
             annotation = u", ".join([u"{}: {}".format(k, v) for k, v in self.metadata.iteritems()])
-            annotated_query = u"/* {} */ {}".format(annotation, self.query)
+            annotated_query = u"/* Berasal dari: {}, {} */\n{}".format(settings.NAME, annotation, self.query)
         else:
             annotated_query = self.query
         return annotated_query
