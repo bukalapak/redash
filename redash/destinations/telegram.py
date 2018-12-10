@@ -50,7 +50,7 @@ class Telegram(BaseDestination):
         recipients = []
         for chat_id in recipients_unfiltered:
           if chat_id in whitelist:
-            recipients.add(chat_id)
+            recipients.append(chat_id)
 
         if not recipients:
             logging.warning("No valid chat ID given. Skipping send.")
@@ -60,10 +60,10 @@ class Telegram(BaseDestination):
         essence = ""
 
         if str(options.get('short_mode')).lower() == "yes":
-          essence = shortmode(self, alert, query, user, new_state, app, host, options)
+          essence = self.shortmode(alert, query, user, new_state, app, host, options)
           #essence = "*{alert_name}* @ {domain_name} *{state}*\n[Configure]({host}/alerts/{alert_id}) | [Query]({host}/queries/{query_id})"
         else:
-          essence = longmode(self, alert, query, user, new_state, app, host, options)
+          essence = self.longmode(alert, query, user, new_state, app, host, options)
           #essence = "*{alert_name}* @ {domain_name}  \n[Configure alert]({host}/alerts/{alert_id})\n\n*{state}* {date} (UTC+0 time)\n\nQuery link:  \n{host}/queries/{query_id}"
         
         #if str(options.get('allow_download_links')).lower() == "yes":
