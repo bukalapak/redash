@@ -44,30 +44,39 @@ class Telegram(BaseDestination):
         return 'fa-bolt'
 
     def notify(self, alert, query, user, new_state, app, host, options):
-        recipients = [chat_id for chat_id in options.get('chat_id', '').split(',') if chat_id]
+
+        recipients_unfiltered = [chat_id for chat_id in options.get('chat_id', '').split(',') if chat_id]
+        whitelist = os.environ.get('REDASH_BOT_WHITELIST', '').split(',')
+        recipients = []
+        for chat_id in recipients_unfiltered:
+          if chat_id in whitelist:
+            recipients.add(chat_id)
 
         if not recipients:
-            logging.warning("No chat ID given. Skipping send.")
-
+            logging.warning("No valid chat ID given. Skipping send.")
 
         domain_name = host.split('.')[0].replace("https://","") 
 
-        if str(options.get('short_mode')).lower() == "yes":
-          essence = "*{alert_name}* @ {domain_name} *{state}*\n[Configure]({host}/alerts/{alert_id}) | [Query]({host}/queries/{query_id})"
-        else:
-          essence = "*{alert_name}* @ {domain_name}  \n[Configure alert]({host}/alerts/{alert_id})\n\n*{state}* {date} (UTC+0 time)\n\nQuery link:  \n{host}/queries/{query_id}"
-        
-        if str(options.get('allow_download_links')).lower() == "yes":
-          result_csv = "{host}/api/queries/{query_id}/results/{result_id}.csv".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
-          result_xlsx = "{host}/api/queries/{query_id}/results/{result_id}.xlsx".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
-          result_json = "{host}/api/queries/{query_id}/results/{result_id}.json".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
+        essence = ""
 
-          if str(options.get('short_mode')).lower() == "yes":
-            essence += " | [CSV]({result_csv}) | [XLSX]({result_xlsx}) | [JSON]({result_json})".format(result_csv=result_csv, result_xlsx=result_xlsx, result_json=result_json)
-          else:
-            essence += "  \nDownload query result in .csv:  \n[CSV download]({result_csv})".format(result_csv=result_csv)
-            essence += "  \nDownload query result in .xlsx:  \n[XLSX download]({result_xlsx})".format(result_xlsx=result_xlsx)
-            essence += "  \nDownload query result in .json:  \n[JSON download]({result_json})".format(result_json=result_json)
+        if str(options.get('short_mode')).lower() == "yes":
+          essence = shortmode(self, alert, query, user, new_state, app, host, options)
+          #essence = "*{alert_name}* @ {domain_name} *{state}*\n[Configure]({host}/alerts/{alert_id}) | [Query]({host}/queries/{query_id})"
+        else:
+          essence = longmode(self, alert, query, user, new_state, app, host, options)
+          #essence = "*{alert_name}* @ {domain_name}  \n[Configure alert]({host}/alerts/{alert_id})\n\n*{state}* {date} (UTC+0 time)\n\nQuery link:  \n{host}/queries/{query_id}"
+        
+        #if str(options.get('allow_download_links')).lower() == "yes":
+        #  result_csv = "{host}/api/queries/{query_id}/results/{result_id}.csv".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
+        #  result_xlsx = "{host}/api/queries/{query_id}/results/{result_id}.xlsx".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
+        #  result_json = "{host}/api/queries/{query_id}/results/{result_id}.json".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
+
+        #  if str(options.get('short_mode')).lower() == "yes":
+        #    essence += " | [CSV]({result_csv}) | [XLSX]({result_xlsx}) | [JSON]({result_json})".format(result_csv=result_csv, result_xlsx=result_xlsx, result_json=result_json)
+        #  else:
+        #    essence += "  \nDownload query result in .csv:  \n[CSV download]({result_csv})".format(result_csv=result_csv)
+        #    essence += "  \nDownload query result in .xlsx:  \n[XLSX download]({result_xlsx})".format(result_xlsx=result_xlsx)
+        #    essence += "  \nDownload query result in .json:  \n[JSON download]({result_json})".format(result_json=result_json)
       
         send = True 
 
@@ -93,5 +102,33 @@ class Telegram(BaseDestination):
               requests.get(url)
           except Exception:
               logging.exception("Telegram send error.")
+
+    def longmode(self, alert, query, user, new_state, app, host, options):
+
+        essence = "*{alert_name}* @ {domain_name}  \n[Configure alert]({host}/alerts/{alert_id})\n\n*{state}* {date} (UTC+0 time)\n\nQuery link:  \n{host}/queries/{query_id}"
+
+        if str(options.get('allow_download_links')).lower() == "yes":
+          result_csv = "{host}/api/queries/{query_id}/results/{result_id}.csv".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
+          result_xlsx = "{host}/api/queries/{query_id}/results/{result_id}.xlsx".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
+          result_json = "{host}/api/queries/{query_id}/results/{result_id}.json".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
+
+          essence += "  \nDownload query result in .csv:  \n[CSV download]({result_csv})".format(result_csv=result_csv)
+          essence += "  \nDownload query result in .xlsx:  \n[XLSX download]({result_xlsx})".format(result_xlsx=result_xlsx)
+          essence += "  \nDownload query result in .json:  \n[JSON download]({result_json})".format(result_json=result_json)
+
+        return essence
+
+    def shortmode(self, alert, query, user, new_state, app, host, options):
+
+        essence = "*{alert_name}* @ {domain_name} *{state}*\n[Configure]({host}/alerts/{alert_id}) | [Query]({host}/queries/{query_id})"
+
+        if str(options.get('allow_download_links')).lower() == "yes":
+          result_csv = "{host}/api/queries/{query_id}/results/{result_id}.csv".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
+          result_xlsx = "{host}/api/queries/{query_id}/results/{result_id}.xlsx".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
+          result_json = "{host}/api/queries/{query_id}/results/{result_id}.json".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
+
+          essence += " | [CSV]({result_csv}) | [XLSX]({result_xlsx}) | [JSON]({result_json})".format(result_csv=result_csv, result_xlsx=result_xlsx, result_json=result_json)
+
+        return essence
 
 register(Telegram)
