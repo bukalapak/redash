@@ -64,7 +64,7 @@ class Telegram(BaseDestination):
           #essence = "*{alert_name}* @ {domain_name} *{state}*\n[Configure]({host}/alerts/{alert_id}) | [Query]({host}/queries/{query_id})"
         else:
           essence = self.longmode(alert, query, user, new_state, app, host, options)
-          #essence = "*{alert_name}* @ {domain_name}  \n[Configure alert]({host}/alerts/{alert_id})\n\n*{state}* {date} (UTC+0 time)\n\nQuery link:  \n{host}/queries/{query_id}"
+          #essence = "*{alert_name}* @ {domain_name} *{state}*\n[Configure]({host}/alerts/{alert_id}) | [Query]({host}/queries/{query_id})"
         
         #if str(options.get('allow_download_links')).lower() == "yes":
         #  result_csv = "{host}/api/queries/{query_id}/results/{result_id}.csv".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
