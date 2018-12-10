@@ -61,23 +61,9 @@ class Telegram(BaseDestination):
 
         if str(options.get('short_mode')).lower() == "yes":
           essence = self.shortmode(alert, query, user, new_state, app, host, options)
-          #essence = "*{alert_name}* @ {domain_name} *{state}*\n[Configure]({host}/alerts/{alert_id}) | [Query]({host}/queries/{query_id})"
         else:
           essence = self.longmode(alert, query, user, new_state, app, host, options)
-          #essence = "*{alert_name}* @ {domain_name} *{state}*\n[Configure]({host}/alerts/{alert_id}) | [Query]({host}/queries/{query_id})"
-        
-        #if str(options.get('allow_download_links')).lower() == "yes":
-        #  result_csv = "{host}/api/queries/{query_id}/results/{result_id}.csv".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
-        #  result_xlsx = "{host}/api/queries/{query_id}/results/{result_id}.xlsx".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
-        #  result_json = "{host}/api/queries/{query_id}/results/{result_id}.json".format(host=host,query_id=query.id,result_id=query.latest_query_data_id)
 
-        #  if str(options.get('short_mode')).lower() == "yes":
-        #    essence += " | [CSV]({result_csv}) | [XLSX]({result_xlsx}) | [JSON]({result_json})".format(result_csv=result_csv, result_xlsx=result_xlsx, result_json=result_json)
-        #  else:
-        #    essence += "  \nDownload query result in .csv:  \n[CSV download]({result_csv})".format(result_csv=result_csv)
-        #    essence += "  \nDownload query result in .xlsx:  \n[XLSX download]({result_xlsx})".format(result_xlsx=result_xlsx)
-        #    essence += "  \nDownload query result in .json:  \n[JSON download]({result_json})".format(result_json=result_json)
-      
         send = True 
 
         if new_state == "triggered":
