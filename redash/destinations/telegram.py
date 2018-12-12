@@ -8,6 +8,7 @@ import requests
 import urllib
 import datetime
 import os
+import ast
 
 class Telegram(BaseDestination):
 
@@ -46,10 +47,10 @@ class Telegram(BaseDestination):
     def notify(self, alert, query, user, new_state, app, host, options):
 
         recipients_unfiltered = [chat_id for chat_id in options.get('chat_id', '').split(',') if chat_id]
-        whitelist = os.environ.get('REDASH_BOT_WHITELIST', '').split(',')
+        whitelist = ast.literal_eval(os.environ.get('REDASH_BOT_WHITELIST', ''))
         recipients = []
         for chat_id in recipients_unfiltered:
-          if chat_id in whitelist:
+          if int(chat_id) in whitelist:
             recipients.append(chat_id)
 
         if not recipients:

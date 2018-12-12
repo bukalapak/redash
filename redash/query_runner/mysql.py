@@ -141,6 +141,7 @@ class Mysql(BaseSQLQueryRunner):
                                          connect_timeout=60)
             cursor = connection.cursor()
             logger.debug("MySQL running query: %s", query)
+            cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
             cursor.execute(query)
 
             data = cursor.fetchall()
