@@ -92,13 +92,22 @@ def get_latest_release_from_ci():
 def get_release(channel):
     if channel == 'ci':
         return get_latest_release_from_ci()
-
+ 
     response = requests.get('https://version.redash.io/api/releases?channel={}'.format(channel))
-    release = response.json()[0]
-
+    ## MODIFIED BELOW ##
+    # release = response.json()[0] 
+    release = [r for r in response.json() if r['version'] == '4.0.2']
+ 
+    if len(release) == 0:
+        exit(1)
+ 
+    print(release)
+    release = release[0]
+    #####################
+ 
     filename = release['download_url'].split('/')[-1]
     release = Release(release['version'], release['download_url'], filename, release['description'])
-
+ 
     return release
 
 
