@@ -15,7 +15,7 @@ function TasksCtrl($scope, $location, $http, $timeout, Events) {
     done: [],
   };
 
-  this.tasksPaginator = new Paginator([], { itemsPerPage: 50 });
+  this.tasksPaginator = new Paginator([], { itemsPerPage: 100 });
 
   $scope.setTab = (tab) => {
     $scope.selectedTab = tab;

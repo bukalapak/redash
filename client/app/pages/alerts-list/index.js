@@ -14,7 +14,7 @@ class AlertsListCtrl {
     this.showEmptyState = false;
     this.showList = false;
 
-    this.alerts = new Paginator([], { itemsPerPage: 20 });
+    this.alerts = new Paginator([], { itemsPerPage: 100 });
     Alert.query((alerts) => {
       if (alerts.length > 0) {
         this.showList = true;

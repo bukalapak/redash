@@ -5,7 +5,7 @@ import template from './table.html';
 import editorTemplate from './table-editor.html';
 import './table-editor.less';
 
-const ALLOWED_ITEM_PER_PAGE = [5, 10, 15, 20, 25];
+const ALLOWED_ITEM_PER_PAGE = [5, 10, 15, 20, 25, 30, 40, 50, 70, 100];
 
 const DISPLAY_AS_OPTIONS = [
   { name: 'Text', value: 'string' },

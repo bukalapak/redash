@@ -6,7 +6,7 @@ import template from './queries-search-results-page.html';
 
 function QuerySearchCtrl($location, $filter, currentUser, Events, Query) {
   this.term = $location.search().q;
-  this.paginator = new Paginator([], { itemsPerPage: 20 });
+  this.paginator = new Paginator([], { itemsPerPage: 1000 });
 
   this.tabs = [
     { path: 'queries', name: 'All Queries', isActive: path => path === '/queries' },

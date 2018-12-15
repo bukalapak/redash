@@ -1,5 +1,5 @@
 export default class LivePaginator {
-  constructor(rowsFetcher, { page = 1, itemsPerPage = 20 } = {}) {
+  constructor(rowsFetcher, { page = 1, itemsPerPage = 1000 } = {}) {
     this.page = page;
     this.itemsPerPage = itemsPerPage;
     this.rowsFetcher = rowsFetcher;

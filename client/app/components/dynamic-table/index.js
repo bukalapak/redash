@@ -48,8 +48,8 @@ function sortRows(rows, orderBy) {
 }
 
 function validateItemsPerPage(value, defaultValue) {
-  defaultValue = defaultValue || 10;
-  value = parseInt(value, 10) || defaultValue;
+  defaultValue = defaultValue || 50;
+  value = parseInt(value, 50) || defaultValue;
   return value > 0 ? value : defaultValue;
 }
 

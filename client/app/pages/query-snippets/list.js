@@ -5,7 +5,7 @@ import template from './list.html';
 function SnippetsCtrl($location, currentUser, Events, QuerySnippet) {
   Events.record('view', 'page', 'query_snippets');
 
-  this.snippets = new Paginator([], { itemsPerPage: 20 });
+  this.snippets = new Paginator([], { itemsPerPage: 100 });
   QuerySnippet.query((snippets) => {
     this.snippets.updateRows(snippets);
   });
