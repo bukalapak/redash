@@ -24,7 +24,6 @@ RUN apt-get update && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
-
 RUN mkdir /opt/redash && \
     chown -R redash /opt/redash
     
@@ -39,7 +38,7 @@ RUN pip install --upgrade pyasn1-modules
 
 ADD . /opt/redash/
 
-ADD https://releases.hashicorp.com/envconsul/0.6.2/envconsul_0.6.2_linux_amd64.tgz /tmp/
-RUN tar -xf /tmp/envconsul* -C /bin && rm /tmp/envconsul*
+RUN wget https://releases.hashicorp.com/envconsul/0.6.2/envconsul_0.6.2_linux_amd64.tgz -P /tmp/ && \
+    tar -xf /tmp/envconsul* -C /bin && rm /tmp/envconsul*
 
 USER redash
