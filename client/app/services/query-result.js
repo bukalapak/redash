@@ -459,13 +459,12 @@ function QueryResultService($resource, $timeout, $q) {
         if (tryCount === undefined) {
           tryCount = 1;
         } else if (tryCount > 10) {
-          tryCount = 10
+          tryCount = 10;
         }
 
         if (this.getStatus() === 'processing' && this.job.query_result_id && this.job.query_result_id !== 'None') {
           this.loadResult();
         } else if (this.getStatus() !== 'failed') {
-
           $timeout(() => {
             this.refreshStatus(query, tryCount + 1);
           }, 100 * tryCount);
@@ -476,8 +475,8 @@ function QueryResultService($resource, $timeout, $q) {
         this.update({
           job: {
             error: "The browser failed to refresh query status from the Redash server. Check your network connection, or diagnose using the browser's network inspect tools. Contact Core-Data squad for help.",
-            status: 4
-          }
+            status: 4,
+          },
         });
       });
     }
