@@ -1113,9 +1113,8 @@ class Change(GFKBase, db.Model):
     def to_dict(self, full=True):
         d = {
             'id': self.id,
-            'object_id': self.object_id,
+            'object_id': str(self.object_id),
             'object_type': self.object_type,
-            'change_type': self.change_type,
             'object_version': self.object_version,
             'change': self.change,
             'created_at': self.created_at
@@ -1138,7 +1137,7 @@ class Change(GFKBase, db.Model):
     @classmethod
     def list_versions(cls, query):
         return cls.query.filter(
-            cls.object_id == query.id,
+            cls.object_id == str(query.id),
             cls.object_type == 'queries')
 
 
