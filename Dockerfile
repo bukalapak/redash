@@ -53,8 +53,8 @@ ADD . /opt/redash
 #RUN wget "https://s3.amazonaws.com/redash-releases/redash.3.0.0.b3134.tar.gz" -O "/tmp/redash.tar.gz" && \
 #    tar -C "/opt/redash/" -xvf "/tmp/redash.tar.gz"
 
-ADD https://releases.hashicorp.com/envconsul/0.6.2/envconsul_0.6.2_linux_amd64.tgz /tmp/
-RUN tar -xf /tmp/envconsul* -C /bin && rm /tmp/envconsul*
+RUN wget https://releases.hashicorp.com/envconsul/0.6.2/envconsul_0.6.2_linux_amd64.tgz -P /tmp/ && \
+    tar -xf /tmp/envconsul* -C /bin && rm /tmp/envconsul*
 
 RUN ln -s /home/redash/.local/bin/celery /usr/bin/celery
 
