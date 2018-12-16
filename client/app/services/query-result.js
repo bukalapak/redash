@@ -439,7 +439,7 @@ function QueryResultService($resource, $timeout, $q) {
             logger('Connection error while trying to load result', error);
             this.update({
               job: {
-                error: 'failed communicating with server. Please check your Internet connection and try again.',
+                error: "The browser failed to load query result from the Redash server. Check your network connection, or diagnose using the browser's network inspect tools. Contact Core-Data squad for help.",
                 status: 4,
               },
             });
@@ -452,21 +452,33 @@ function QueryResultService($resource, $timeout, $q) {
       );
     }
 
-    refreshStatus(query) {
+    refreshStatus(query, tryCount) {
       Job.get({ id: this.job.id }, (jobResponse) => {
         this.update(jobResponse);
+
+        if (tryCount === undefined) {
+          tryCount = 1;
+        } else if (tryCount > 10) {
+          tryCount = 10
+        }
 
         if (this.getStatus() === 'processing' && this.job.query_result_id && this.job.query_result_id !== 'None') {
           this.loadResult();
         } else if (this.getStatus() !== 'failed') {
+
           $timeout(() => {
-            this.refreshStatus(query);
-          }, 3000);
+            this.refreshStatus(query, tryCount + 1);
+          }, 100 * tryCount);
         }
       }, (error) => {
         logger('Connection error', error);
         // TODO: use QueryResultError, or better yet: exception/reject of promise.
-        this.update({ job: { error: 'failed communicating with server. Please check your Internet connection and try again.', status: 4 } });
+        this.update({
+          job: {
+            error: "The browser failed to refresh query status from the Redash server. Check your network connection, or diagnose using the browser's network inspect tools. Contact Core-Data squad for help.",
+            status: 4
+          }
+        });
       });
     }
 
@@ -503,7 +515,7 @@ function QueryResultService($resource, $timeout, $q) {
           queryResult.update(error.data);
         } else {
           logger('Unknown error', error);
-          queryResult.update({ job: { error: 'unknown error occurred. Please try again later.', status: 4 } });
+          queryResult.update({ job: { error: 'Unknown error occurred. Contact Core-Data squad if problem persists.', status: 4 } });
         }
       });
 
