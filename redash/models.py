@@ -177,9 +177,9 @@ class ChangeTrackingMixin(object):
     skipped_fields = ('id', 'created_at', 'updated_at', 'version')
     _clean_values = None
 
-    def __init__(self, *a, **kw):
-        super(ChangeTrackingMixin, self).__init__(*a, **kw)
-        self.record_changes(self.user)
+    # def __init__(self, *a, **kw):
+    #     super(ChangeTrackingMixin, self).__init__(*a, **kw)
+    #     self.record_changes(self.user)
 
     def prep_cleanvalues(self):
         self.__dict__['_clean_values'] = {}
@@ -191,10 +191,13 @@ class ChangeTrackingMixin(object):
     def __setattr__(self, key, value):
         if self._clean_values is None:
             self.prep_cleanvalues()
-        for attr in inspect(self.__class__).column_attrs:
-            col, = attr.columns
-            previous = getattr(self, attr.key, None)
-            self._clean_values[col.name] = previous
+        # for attr in inspect(self.__class__).column_attrs:
+        #     col, = attr.columns
+        #     previous = getattr(self, attr.key, None)
+        #     self._clean_values[col.name] = previous
+        if key in inspect(self.__class__).column_attrs:
+            previous = getattr(self, key, None)
+            self._clean_values[key] = previous
 
         super(ChangeTrackingMixin, self).__setattr__(key, value)
 
@@ -207,11 +210,20 @@ class ChangeTrackingMixin(object):
             if attr.key not in self.skipped_fields:
                 changes[col.name] = {'previous': self._clean_values[col.name],
                                      'current': getattr(self, attr.key)}
+        if changes:
+            self.version = (self.version or 0) + 1
+            change = Change(object=self,
+                            object_version=self.version,
+                            user=changed_by,
+                            change=changes)
+            db.session.add(change)
 
-        db.session.add(Change(object=self,
-                              object_version=self.version,
-                              user=changed_by,
-                              change=changes))
+        return change
+
+        # db.session.add(Change(object=self,
+        #                       object_version=self.version,
+        #                       user=changed_by,
+        #                       change=changes))
 
 
 class BelongsToOrgMixin(object):
@@ -772,7 +784,7 @@ def should_schedule_next(previous_iteration, now, schedule, failures):
 
 class Query(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model):
     id = Column(db.Integer, primary_key=True)
-    version = Column(db.Integer, default=1)
+    version = Column(db.Integer, default=0)
     org_id = Column(db.Integer, db.ForeignKey('organizations.id'))
     org = db.relationship(Organization, backref="queries")
     data_source_id = Column(db.Integer, db.ForeignKey("data_sources.id"), nullable=True)
@@ -974,6 +986,7 @@ class Query(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model):
         kwargs = {a: getattr(self, a) for a in forked_list}
         forked_query = Query.create(name=u'Copy of (#{}) {}'.format(self.id, self.name),
                                     user=user, **kwargs)
+        forked_query.record_changes(changed_by=user)
 
         for v in self.visualizations:
             if v.type == 'TABLE':
@@ -1121,6 +1134,12 @@ class Change(GFKBase, db.Model):
             cls.object_id == obj.id,
             cls.object_type == obj.__class__.__tablename__).order_by(
                 cls.object_version.desc()).first()
+
+    @classmethod
+    def list_versions(cls, query):
+        return cls.query.filter(
+            cls.object_id == query.id,
+            cls.object_type == 'queries')
 
 
 class Alert(TimestampMixin, db.Model):

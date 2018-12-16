@@ -9,7 +9,8 @@ from redash.handlers.alerts import AlertResource, AlertListResource, AlertSubscr
 from redash.handlers.dashboards import DashboardListResource, RecentDashboardsResource, DashboardResource, DashboardShareResource, PublicDashboardResource 
 from redash.handlers.data_sources import DataSourceTypeListResource, DataSourceListResource, DataSourceSchemaResource, DataSourceResource, DataSourcePauseResource, DataSourceTestResource
 from redash.handlers.events import EventResource
-from redash.handlers.queries import QueryForkResource, QueryRefreshResource, QueryListResource, QueryRecentResource, QuerySearchResource, QueryResource, MyQueriesResource
+#from redash.handlers.queries import QueryForkResource, QueryRefreshResource, QueryListResource, QueryRecentResource, QuerySearchResource, QueryResource, MyQueriesResource
+from redash.handlers.queries import QueryForkResource, QueryRefreshResource, QueryListResource, QueryRecentResource, QuerySearchResource, QueryResource, MyQueriesResource, QueryVersionListResource, ChangeResource
 from redash.handlers.query_results import QueryResultListResource, QueryResultResource, JobResource
 from redash.handlers.users import UserResource, UserListResource, UserInviteResource, UserResetPasswordResource
 from redash.handlers.visualizations import VisualizationListResource
@@ -102,3 +103,6 @@ api.add_org_resource(DestinationListResource, '/api/destinations', endpoint='des
 
 api.add_org_resource(QuerySnippetResource, '/api/query_snippets/<snippet_id>', endpoint='query_snippet')
 api.add_org_resource(QuerySnippetListResource, '/api/query_snippets', endpoint='query_snippets')
+
+api.add_org_resource(QueryVersionListResource, '/api/queries/<query_id>/version', endpoint='query_versions')
+api.add_org_resource(ChangeResource, '/api/changes/<change_id>', endpoint='changes')
