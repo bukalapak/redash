@@ -458,7 +458,7 @@ function QueryResultService($resource, $timeout, $q) {
         } else if (this.getStatus() !== 'failed') {
           $timeout(() => {
             this.refreshStatus(query);
-          }, 200);
+          }, 500);
         }
       }, (error) => {
         logger('Connection error', error);
