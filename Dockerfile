@@ -39,6 +39,7 @@ RUN pip install --user -r requirements.txt
 RUN pip install --user -r requirements_all_ds.txt
 RUN pip install --user --upgrade pyasn1-modules
 RUN pip install --user pandas
+RUN pip install --user numpy
 
 USER root
 
