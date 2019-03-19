@@ -117,11 +117,11 @@ function VisualizationOptionsEditor(Visualization) {
 
 function FilterValueFilter(clientConfig) {
   return (value, filter) => {
-    // let firstValue = value;
-    let firstValue = '*';
+    let firstValue = value;
+    //let firstValue = '*';
     if (isArray(value)) {
-      // firstValue = value[0];
-      firstValue = '*';
+      firstValue = value[0];
+      //firstValue = '*';
     }
 
     // TODO: deduplicate code with table.js:
