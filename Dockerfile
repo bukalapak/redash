@@ -37,9 +37,9 @@ ADD ./requirements*txt /opt/redash/
 RUN pip install --user setproctitle
 RUN pip install --user -r requirements.txt
 RUN pip install --user -r requirements_all_ds.txt
+RUN pip install --user --upgrade pyasn1-modules
 RUN pip install --user pyOpenSSL==16.2.0
 RUN pip install --user oauthlib==2.1.0
-RUN pip install --user --upgrade pyasn1-modules
 RUN pip install --user pandas
 RUN pip install --user numpy
 
