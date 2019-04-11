@@ -42,6 +42,7 @@ RUN pip install --user pyOpenSSL==16.2.0
 RUN pip install --user oauthlib==2.1.0
 RUN pip install --user pandas
 RUN pip install --user numpy
+RUN pip install --user thrift==0.9.3
 
 USER root
 
