@@ -77,12 +77,12 @@ function CurrentUserService() {
 
   this.canEdit = (object) => {
     const userId = object.user_id || (object.user && object.user.id);
-    return this.hasPermission('admin') || (userId && (userId === this.id));
+    return this.hasPermission('admin') || (userId && (userId === this.id)) || this.hasPermission('editor');
   };
 
   this.hasPermission = permission => this.permissions.indexOf(permission) !== -1;
 
-  this.isAdmin = this.hasPermission('admin');
+  this.isAdmin = this.hasPermission('admin') || this.hasPermission('editor');
 }
 
 function ClientConfigService() {
