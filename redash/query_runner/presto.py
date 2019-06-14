@@ -53,6 +53,9 @@ class Presto(BaseQueryRunner):
                 },
                 'username': {
                     'type': 'string'
+                },
+                'not_schedulable': {
+                    'type': 'boolean'
                 }
             },
             'required': ['host']

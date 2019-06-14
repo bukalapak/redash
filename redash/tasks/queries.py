@@ -281,6 +281,8 @@ def refresh_queries():
                 logging.info("Skipping refresh of %s because the datasource is none.", query.id)
             elif query.data_source.paused:
                 logging.info("Skipping refresh of %s because datasource - %s is paused (%s).", query.id, query.data_source.name, query.data_source.pause_reason)
+            elif query.data_source.options.to_dict().get('not_schedulable', False):
+                logging.info("Skipping refresh of %s because datasource is not schedulable.", query.id)
             else:
                 if query.options and len(query.options.get('parameters', [])) > 0:
                     query_params = {p['name']: p['value']
