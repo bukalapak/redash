@@ -207,12 +207,13 @@ class JiraJQL(BaseQueryRunner):
 
                 while data['total'] > index:
                     query['startAt'] = index
-                    response, error = self.get_response(jql_url, params=query)
-                    if error is not None:
-                        return None, error
+                    response = requests.get(jql_url, params=query, auth=(self.configuration.get('username'), self.configuration.get('password')))
 
                     data = response.json()
                     index = data['startAt'] + data['maxResults']
+
+                    if response.status_code != 200:
+                        return None, "JIRA returned unexpected status code ({})".format(response.status_code)
 
                     addl_results = parse_issues(data, field_mapping)
                     results.merge(addl_results)
