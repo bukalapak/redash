@@ -74,6 +74,9 @@ function QueryResultService($resource, $timeout, $q) {
 
       this.updatedAt = moment();
 
+      // exteded status flags
+      this.isLoadingResult = false;
+
       if (props) {
         this.update(props);
       }
@@ -148,6 +151,9 @@ function QueryResultService($resource, $timeout, $q) {
     }
 
     getStatus() {
+      if (this.isLoadingResult) {
+        return 'loading-result';
+      }
       return this.status || statuses[this.job.status];
     }
 
@@ -417,18 +423,32 @@ function QueryResultService($resource, $timeout, $q) {
     static getById(id) {
       const queryResult = new QueryResult();
 
+      queryResult.isLoadingResult = true;
       QueryResultResource.get({ id }, (response) => {
+        // Success handler
+        queryResult.isLoadingResult = false;
         queryResult.update(response);
+      }, (response) => {
+        // Error handler
+        queryResult.isLoadingResult = false;
+        queryResult.update({
+          job: {
+            error: response.data.message,
+            status: 4,
+          },
+        });
       });
 
       return queryResult;
     }
 
     loadResult(tryCount) {
+      this.isLoadingResult = true;
       QueryResultResource.get(
         { id: this.job.query_result_id },
         (response) => {
           this.update(response);
+          this.isLoadingResult = false;
         },
         (error) => {
           if (tryCount === undefined) {
@@ -439,10 +459,11 @@ function QueryResultService($resource, $timeout, $q) {
             logger('Connection error while trying to load result', error);
             this.update({
               job: {
-                error: "The browser failed to load query result from the Redash server. Check your network connection, or diagnose using the browser's network inspect tools. Contact Core-Data squad for help.",
+                error: 'The browser failed to load query result from the Redash server. This is usually a network issue or because the result is too large. Contact Bukalapak Data-Infrastructure squad for help.',
                 status: 4,
               },
             });
+            this.isLoadingResult = false;
           } else {
             $timeout(() => {
               this.loadResult(tryCount + 1);

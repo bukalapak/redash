@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 try:
     from pyhive import hive
     enabled = True
+    logging.getLogger('pyhive').setLevel(logging.CRITICAL)
 except ImportError:
     enabled = False
 
@@ -82,7 +83,9 @@ class Hive(BaseSQLQueryRunner):
             columns_query = "show columns in %s.%s"
 
             for schema_name in filter(lambda a: len(a) > 0, map(lambda a: str(a['database_name']), self._run_query_internal(schemas_query))):
+              if str(schema_name)[0] != '_':
                 for table_name in filter(lambda a: len(a) > 0, map(lambda a: str(a['tab_name']), self._run_query_internal(tables_query % schema_name))):
+                  if str(table_name)[0] != '_':
                     columns = filter(lambda a: len(a) > 0, map(lambda a: str(a['field']), self._run_query_internal(columns_query % (schema_name, table_name))))
 
                     if schema_name != 'default':
