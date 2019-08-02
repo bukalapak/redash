@@ -9,16 +9,28 @@
         <thead>
           <tr>
             <th>Name</th>
+            <th>Groups</th>
+            <th>Email</th>
             <th>Joined</th>
+            <th>Updated</th>
           </tr>
         </thead>
         <tbody>
           <tr ng-repeat="row in $ctrl.users.getPageRows()">
             <td>
-              <img ng-src="{{row.gravatar_url}}" height="40px"/> <a href="users/{{row.id}}">{{row.name}}</a>
+              <img ng-src="{{row.gravatar_url}}" height="20px"/> <a href="users/{{row.id}}">{{row.name}}</a>
             </td>
             <td>
-              <span am-time-ago="row.created_at"></span>
+              {{row.groups}}
+            </td>
+            <td>
+              {{row.email}}
+            </td>
+            <td>
+              {{row.created_at}} (<span am-time-ago="row.created_at"></span>)
+            </td>
+            <td>
+              {{row.updated_at}} (<span am-time-ago="row.updated_at"></span>)
             </td>
           </tr>
         </tbody>

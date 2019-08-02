@@ -11,6 +11,8 @@ from redash.handlers.base import BaseResource, require_fields, get_object_or_404
 
 from redash.authentication.account import invite_link_for_user, send_invite_email, send_password_reset_email
 
+import logging
+logger = logging.getLogger(__name__)
 
 def invite_user(org, inviter, user):
     invite_url = invite_link_for_user(user)
@@ -21,7 +23,19 @@ def invite_user(org, inviter, user):
 class UserListResource(BaseResource):
     @require_permission('list_users')
     def get(self):
-        return [u.to_dict() for u in models.User.all(self.current_org)]
+        unsorted_users = [u.to_dict() for u in models.User.all(self.current_org)]
+        groups = [g.to_dict() for g in models.Group.all(self.current_org)]
+        for i in unsorted_users:
+          i['created_at'] = i['created_at'].strftime("%Y-%m-%d %H:%M:%S")
+          i['updated_at'] = i['updated_at'].strftime("%Y-%m-%d %H:%M:%S")
+          groups_string = ""
+          for group_id in i['groups']:
+            get_group = [group['name'] for group in groups if group['id'] == group_id]
+            for group_name in get_group:
+              groups_string = groups_string + "[" + str(group_name) + "] "
+          i['groups'] = groups_string;
+        sorted_users = sorted(unsorted_users, key = lambda i: i['name'].encode('utf-8').lower())
+        return sorted_users
 
     @require_admin
     def post(self):

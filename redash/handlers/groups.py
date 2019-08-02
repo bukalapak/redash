@@ -100,7 +100,17 @@ class GroupMemberListResource(BaseResource):
             abort(403)
 
         members = models.Group.members(group_id)
-        return [m.to_dict() for m in members]
+        unsorted_members = [m.to_dict() for m in members]
+        groups = [g.to_dict() for g in models.Group.all(self.current_org)]
+        for i in unsorted_members:
+          groups_string = ""
+          for group_id in i['groups']:
+            get_group = [group['name'] for group in groups if group['id'] == group_id]
+            for group_name in get_group:
+              groups_string = groups_string + "[" + str(group_name) + "] "
+          i['groups'] = groups_string;
+        sorted_members = sorted(unsorted_members, key = lambda i: i['name'].encode('utf-8').lower())
+        return sorted_members
 
 
 class GroupMemberResource(BaseResource):
