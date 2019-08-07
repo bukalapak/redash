@@ -1,7 +1,8 @@
 Bukalapak fork for Redash
 
+- Dockerfile and .gitignore optimization, Redash's web server worker and Celery worker can now be horizontally scaled on Kubernetes
+- Redash Bukalapak's Kubernetes deployment scripts
 - Telegram alert destination (with specifically designed Bukalapak Telegram bot)
-- Dockerfile and .gitignore optimization
 - Better query annotation for Bukalapak data analysis environments
 - Add query versioning feature from Mozilla branch of Redash
 - Update outdated packages like OAuth and pyOpenSSL
