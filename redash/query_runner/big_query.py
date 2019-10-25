@@ -32,6 +32,7 @@ types_map = {
     'STRING': TYPE_STRING,
     'TIMESTAMP': TYPE_DATETIME,
 }
+location = "asia-southeast1"
 
 
 def transform_row(row, fields):
@@ -69,7 +70,7 @@ def _load_key(filename):
 
 
 def _get_query_results(jobs, project_id, job_id, start_index):
-    query_reply = jobs.getQueryResults(projectId=project_id, jobId=job_id, startIndex=start_index).execute()
+    query_reply = jobs.getQueryResults(projectId=project_id, jobId=job_id, startIndex=start_index, location=location).execute()
     logging.debug('query_reply %s', query_reply)
     if not query_reply['jobComplete']:
         time.sleep(10)
@@ -197,7 +198,7 @@ class BigQuery(BaseQueryRunner):
 
             current_row += len(query_reply['rows'])
             query_reply = jobs.getQueryResults(projectId=project_id, jobId=query_reply['jobReference']['jobId'],
-                                               startIndex=current_row).execute()
+                                               startIndex=current_row, location=location).execute()
 
         columns = [{'name': f["name"],
                     'friendly_name': f["name"],
