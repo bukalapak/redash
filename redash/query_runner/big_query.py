@@ -125,10 +125,6 @@ class BigQuery(BaseQueryRunner):
             'secret': ['jsonKeyFile']
         }
 
-    @classmethod
-    def annotate_query(cls):
-        return False
-
     def __init__(self, configuration):
         super(BigQuery, self).__init__(configuration)
 
