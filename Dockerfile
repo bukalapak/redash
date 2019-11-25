@@ -34,6 +34,7 @@ RUN echo "export PATH=$PATH:/home/redash/.local/bin" >> ~/.bashrc
 
 ADD ./requirements*txt /opt/redash/
 
+ENV CASS_DRIVER_BUILD_CONCURRENCY=4
 RUN pip install --user setproctitle
 RUN pip install --user -r requirements.txt
 RUN pip install --user -r requirements_all_ds.txt
