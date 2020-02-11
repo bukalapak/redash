@@ -31,6 +31,7 @@ types_map = {
     'BOOLEAN': TYPE_BOOLEAN,
     'STRING': TYPE_STRING,
     'TIMESTAMP': TYPE_DATETIME,
+    'DATETIME': TYPE_DATETIME,
 }
 location = "asia-southeast1"
 
