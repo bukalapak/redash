@@ -406,9 +406,9 @@ function QueryResultService($resource, $timeout, $q) {
 
       filters.forEach((filter) => {
         filter.values = uniq(filter.values, (v) => {
-          if (moment.isMoment(v)) {
-            return v.unix();
-          }
+          // if (moment.isMoment(v)) {
+          //   return v.unix();
+          // }
           return v;
         });
       });
