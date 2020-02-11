@@ -198,7 +198,7 @@ class BigQuery(BaseQueryRunner):
 
         columns = [{'name': f["name"],
                     'friendly_name': f["name"],
-                    'type': types_map.get(f['type'], None)} for f in query_reply["schema"]["fields"]]
+                    'type': types_map.get(f['type'], "string")} for f in query_reply["schema"]["fields"]]
 
         data = {
             "columns": columns,

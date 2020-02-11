@@ -106,6 +106,8 @@ function QueryResultService($resource, $timeout, $q) {
             } else if (isString(v) && v.match(/^\d{4}-\d{2}-\d{2}$/)) {
               row[k] = moment.utc(v);
               newType = 'date';
+            } else if (isString(v) && v.match(/^\d{2}\/\d{2}\/\d{2}$/)) {
+              newType = 'date';
             } else if (typeof (v) === 'object' && v !== null) {
               row[k] = JSON.stringify(v);
             } else {
@@ -406,9 +408,9 @@ function QueryResultService($resource, $timeout, $q) {
 
       filters.forEach((filter) => {
         filter.values = uniq(filter.values, (v) => {
-          // if (moment.isMoment(v)) {
-          //   return v.unix();
-          // }
+          if (moment.isMoment(v)) {
+            return v.unix();
+          }
           return v;
         });
       });
